@@ -1,5 +1,6 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Package, Calendar, CreditCard, Home } from 'lucide-react'
+import { LayoutDashboard, Package, Calendar, CreditCard, Home, LogOut } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 const nav = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -9,6 +10,8 @@ const nav = [
 ]
 
 export default function Layout() {
+  const { user, logout } = useAuth()
+
   return (
     <div className="min-h-screen bg-zinc-900 flex">
 
@@ -44,19 +47,39 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-zinc-700">
-          <p className="text-zinc-500 text-xs text-center">Depreciação por normas técnicas</p>
+        <div className="p-4 border-t border-zinc-700 space-y-3">
+          <div className="flex items-center gap-2">
+            {user?.photoURL
+              ? <img src={user.photoURL} className="w-7 h-7 rounded-full" />
+              : <div className="w-7 h-7 rounded-full bg-indigo-600" />}
+            <p className="text-zinc-400 text-xs truncate">{user?.displayName}</p>
+          </div>
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-zinc-500 hover:text-white hover:bg-zinc-700 transition-colors"
+          >
+            <LogOut size={14} />
+            Sair
+          </button>
         </div>
       </aside>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Mobile header */}
-        <header className="md:hidden flex items-center gap-3 px-4 py-3 bg-zinc-800 border-b border-zinc-700">
-          <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
-            <Home size={14} className="text-indigo-200" />
+        <header className="md:hidden flex items-center justify-between px-4 py-3 bg-zinc-800 border-b border-zinc-700">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
+              <Home size={14} className="text-indigo-200" />
+            </div>
+            <h1 className="text-white font-bold text-sm">Casa Manager</h1>
           </div>
-          <h1 className="text-white font-bold text-sm">Casa Manager</h1>
+          <div className="flex items-center gap-2">
+            {user?.photoURL && <img src={user.photoURL} className="w-7 h-7 rounded-full" />}
+            <button onClick={logout} className="p-1.5 text-zinc-500 hover:text-white transition-colors">
+              <LogOut size={16} />
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 overflow-auto pb-20 md:pb-0">
