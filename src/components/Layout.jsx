@@ -5,13 +5,15 @@ const nav = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/assets', icon: Package, label: 'Ativos' },
   { to: '/timeline', icon: Calendar, label: 'Linha do Tempo' },
-  { to: '/payments', icon: CreditCard, label: 'Parcelamentos' },
+  { to: '/payments', icon: CreditCard, label: 'Parcelas' },
 ]
 
 export default function Layout() {
   return (
     <div className="min-h-screen bg-zinc-900 flex">
-      <aside className="w-64 bg-zinc-800 border-r border-zinc-700 flex flex-col">
+
+      {/* Sidebar — desktop only */}
+      <aside className="hidden md:flex w-64 bg-zinc-800 border-r border-zinc-700 flex-col">
         <div className="p-6 border-b border-zinc-700">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center">
@@ -47,9 +49,43 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto">
-        <Outlet />
-      </main>
+      {/* Main content */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Mobile header */}
+        <header className="md:hidden flex items-center gap-3 px-4 py-3 bg-zinc-800 border-b border-zinc-700">
+          <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <Home size={14} className="text-indigo-200" />
+          </div>
+          <h1 className="text-white font-bold text-sm">Casa Manager</h1>
+        </header>
+
+        <main className="flex-1 overflow-auto pb-20 md:pb-0">
+          <Outlet />
+        </main>
+
+        {/* Bottom nav — mobile only */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-zinc-800 border-t border-zinc-700 flex">
+          {nav.map(({ to, icon: Icon, label, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                `flex-1 flex flex-col items-center justify-center py-2.5 gap-1 text-xs transition-colors ${
+                  isActive ? 'text-indigo-400' : 'text-zinc-500'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} />
+                  <span className="leading-none">{label}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
     </div>
   )
 }
