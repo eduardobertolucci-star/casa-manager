@@ -1,19 +1,22 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth'
+import { onAuthStateChanged, signInWithPopup, signOut, browserLocalPersistence, setPersistence } from 'firebase/auth'
 import { auth, provider } from '../firebase'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(undefined) // undefined = loading
+  const [user, setUser] = useState(undefined)
 
   useEffect(() => {
-    getRedirectResult(auth).catch(() => {})
     const unsub = onAuthStateChanged(auth, u => setUser(u ?? null))
     return unsub
   }, [])
 
-  const login = () => signInWithRedirect(auth, provider)
+  const login = async () => {
+    await setPersistence(auth, browserLocalPersistence)
+    return signInWithPopup(auth, provider)
+  }
+
   const logout = () => signOut(auth)
 
   return (
