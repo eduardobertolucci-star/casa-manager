@@ -1,8 +1,19 @@
+import { useState } from 'react'
 import { Home } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const { login } = useAuth()
+  const [status, setStatus] = useState('')
+
+  const handleLogin = async () => {
+    setStatus('Redirecionando para o Google...')
+    try {
+      await login()
+    } catch (err) {
+      setStatus(`Erro: ${err.message}`)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-6">
@@ -22,7 +33,7 @@ export default function Login() {
             Entre com sua conta Google para acessar seus ativos de qualquer dispositivo.
           </p>
           <button
-            onClick={login}
+            onClick={handleLogin}
             className="w-full flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-zinc-900 font-semibold py-3 px-4 rounded-xl transition-colors text-sm"
           >
             <svg width="18" height="18" viewBox="0 0 18 18">
@@ -33,6 +44,9 @@ export default function Login() {
             </svg>
             Entrar com Google
           </button>
+          {status && (
+            <p className="text-xs text-zinc-400 mt-2">{status}</p>
+          )}
         </div>
 
         <p className="text-zinc-600 text-xs">
